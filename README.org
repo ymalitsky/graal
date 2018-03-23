@@ -1,0 +1,41 @@
+#+OPTIONS: toc:nil
+#+OPTIONS: num:nil
+#+OPTIONS: html-postamble:nil
+
+* About
+This is a supplementary code (in Python 3.6) for the paper Y. Malitsky
+"Golden ratio algorithms for variational inequalities"
+
+* Usage
+There are 4 folders, each dedicated to its own problem: nash
+equilibrium, convex feasibility problem, sparse logistic regression
+and some nonmonotone problem
+
+** Nash equilibrium
+There two ways to run this problem. First, using =.ipynb= file you can
+run one random instance of the problem. It is convenient, as you can
+see all formulas and plot together in one html file. Or you can run
+=nash.py= which generates 10 random instances (as in the paper) and
+saves the plot to =figures= folder.
+
+** Feasibility problem
+This folder contains in fact two independent problems, which
+demonstrate how GRAAL can accelerate the well-known simultaneous
+projection method. The first problem is the tomography reconstruction of the Shepp-Logan phantom from the observed noisy sinogram. This problem is in the Jupyter notebook =Tomography_reconstruction.ipynb= file. The notebook is self-contained. The
+second problem is synthetic: it compares EGRAAL and the projection simultaneous method  for a convex feasibility problem with randomly generated balls. For one instance you can use Jupyter notebook =Convex feasibility problem for random balls.ipynb= and for running this problem over many random instances, use a python script =convex_feasibility_problem_for_random_balls.py=.
+
+
+** Sparse logistic regression
+Folder =data= contains several datasets from [[https://www.csie.ntu.edu.tw/~cjlin/libsvm/][LIBSVM]] library, you can
+download any others as well. In order to read these files, we use
+=sklearn= library. In the beginning of =sparse_logistic_regression.py=
+choose one of these datasets and run the script. It will generate the
+plots in =figures/= folder. Alternatively, you can use Jupyter
+notebook =Sparse_Logistic_Regression.ipynb= for that.
+
+** Nonmonotone problem
+There are two scripts =nonmonotone_F.py= and =nonmonotone_T.py=. The
+first considers the problem of finding a zero of a given nonmonotone
+operator $F$ and the seconds finds an invariant unit direction vector
+$x$ of a given operator $\tilde T$ that is $x$ with $\|x\|=1$ such
+that $\tilde Tx = \alpha x$ for some $\alpha \neq 0$.
