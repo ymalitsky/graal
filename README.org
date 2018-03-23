@@ -36,6 +36,4 @@ notebook =Sparse_Logistic_Regression.ipynb= for that.
 ** Nonmonotone problem
 There are two scripts =nonmonotone_F.py= and =nonmonotone_T.py=. The
 first considers the problem of finding a zero of a given nonmonotone
-operator $F$ and the seconds finds an invariant unit direction vector
-$x$ of a given operator $\tilde T$ that is $x$ with $\|x\|=1$ such
-that $\tilde Tx = \alpha x$ for some $\alpha \neq 0$.
+operator F and the seconds finds an invariant unit direction vector of a given operator T.
