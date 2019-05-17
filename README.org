@@ -13,16 +13,16 @@ and some nonmonotone problem
 
 ** Nash equilibrium
 There two ways to run this problem. First, using =.ipynb= file you can
-run one random instance of the problem. It is convenient, as you can
-see all formulas and plot together in one html file. Or you can run
-=nash.py= which generates 10 random instances (as in the paper) and
-saves the plot to =figures= folder.
+run one random instance of the problem. It is convenient if you want
+to see all formulas and plots together. Alternatively, you can run
+=python nash.py= which will generate 10 random instances (as in the paper) and
+save the plots to =figures= folder.
 
 ** Feasibility problem
 This folder contains in fact two independent problems, which
 demonstrate how GRAAL can accelerate the well-known simultaneous
 projection method. The first problem is the tomography reconstruction of the Shepp-Logan phantom from the observed noisy sinogram. This problem is in the Jupyter notebook =Tomography_reconstruction.ipynb= file. The notebook is self-contained. The
-second problem is synthetic: it compares EGRAAL and the projection simultaneous method  for a convex feasibility problem with randomly generated balls. For one instance you can use Jupyter notebook =Convex feasibility problem for random balls.ipynb= and for running this problem over many random instances, use a python script =convex_feasibility_problem_for_random_balls.py=.
+second problem is synthetic: it compares aGRAAL and the projection simultaneous method  for a convex feasibility problem with randomly generated balls. For one instance you can use Jupyter notebook =Convex feasibility problem for random balls.ipynb= and for running this problem over many random instances, use a python script =convex_feasibility_problem_for_random_balls.py=.
 
 
 ** Sparse logistic regression

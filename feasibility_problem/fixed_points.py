@@ -35,7 +35,7 @@ def krasn_mann(T, x0, a=0.5, numb_iter=100):
 
     return values, x
 
-def fixed_point_egraal(T, x1,  numb_iter=100, phi=1.5, output=False):
+def fixed_point_agraal(T, x1,  numb_iter=100, phi=1.5, output=False):
     """
     Golden Ratio Algorithm for the problem x = Tx
 
@@ -79,5 +79,5 @@ def fixed_point_egraal(T, x1,  numb_iter=100, phi=1.5, output=False):
         step_list.append(la1)
     end = perf_counter()
 
-    print("Time execution of EGRAAL:", end - begin)
+    print("Time execution of aGRAAL:", end - begin)
     return values, x, step_list

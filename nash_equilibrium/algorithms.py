@@ -54,7 +54,7 @@ def tseng_fbf_linesearch(J, F, prox_g, x0, delta=2, numb_iter=100):
     print("CPU time for FBF:", end - begin)
     return [iterates[i] for i in [0, 1,  -2, -1]]
 
-def explicit_graal(J, F, prox_g, x1, numb_iter=100, phi=1.5, output=False):
+def adaptive_graal(J, F, prox_g, x1, numb_iter=100, phi=1.5, output=False):
     """
     Explcit GRAAL
     """
@@ -86,11 +86,11 @@ def explicit_graal(J, F, prox_g, x1, numb_iter=100, phi=1.5, output=False):
         time_list.append(perf_counter() - begin)
     end = perf_counter()
 
-    print("CPU time for EGRAAL:", end - begin)
+    print("CPU time for aGRAAL:", end - begin)
     return values, x, x_, time_list
 
 
-def explicit_graal_terminate(J, F, prox_g, x1, numb_iter=100, phi=1.5, tol=1e-6, output=False):
+def adaptive_graal_terminate(J, F, prox_g, x1, numb_iter=100, phi=1.5, tol=1e-6, output=False):
     """
     Explcit GRAAL but with termination criteria
     """
@@ -126,5 +126,5 @@ def explicit_graal_terminate(J, F, prox_g, x1, numb_iter=100, phi=1.5, tol=1e-6,
 
     end = perf_counter()
 
-    print("CPU time for EGRAAL:", end - begin)
+    print("CPU time for aGRAAL:", end - begin)
     return values, x, i

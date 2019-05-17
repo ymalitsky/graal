@@ -36,7 +36,7 @@ for i in range(n_exp):
     J = lambda z: LA.norm(F(z))
 
 
-    values1, z1, n_it = explicit_graal_terminate(J, F, prox_G, z0, numb_iter=N, phi=1.5, output=False, tol=err)
+    values1, z1, n_it = adaptive_graal_terminate(J, F, prox_G, z0, numb_iter=N, phi=1.5, output=False, tol=err)
     print("norm of z1", LA.norm(z1))
     if n*LA.norm(z1) > 1e-2 and np.abs(1-LA.norm(z1)) <= 1e-4 and values1[-1] <= err:
         success += 1

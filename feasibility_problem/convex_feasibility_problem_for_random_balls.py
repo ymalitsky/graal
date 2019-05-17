@@ -3,16 +3,17 @@ import scipy.linalg as LA
 import matplotlib.pyplot as plt
 from fixed_points import *
 import matplotlib as mpl
+import seaborn as sns
 
 
-mpl.rc('lines', linewidth=2)
-mpl.rcParams.update(
-    {'font.size': 12, 'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
-mpl.rcParams['xtick.major.pad'] = 2
-mpl.rcParams['ytick.major.pad'] = 2
+# mpl.rc('lines', linewidth=2)
+# mpl.rcParams.update(
+#     {'font.size': 12, 'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
+# mpl.rcParams['xtick.major.pad'] = 2
+# mpl.rcParams['ytick.major.pad'] = 2
 
 
-n, m = 2000, 1000
+n, m = 1000, 2000
 n_exp = 100
 N = 1000
 
@@ -52,12 +53,13 @@ for i in range(n_exp):
 
     # run algorithms
     ans1 = krasn_mann(T, x0, 0, numb_iter=N-1)
-    ans2 = fixed_point_egraal(T, x0, numb_iter=N-1, phi=1.5, output=False)
+    ans2 = fixed_point_agraal(T, x0, numb_iter=N-1, phi=1.5, output=False)
 
     km_array[i] = ans1[0]
     graal_array[i] = ans2[0]
 
 # show and save results
+sns.set()
 fig, ax, = plt.subplots(nrows=1, ncols=1, figsize=(6, 4))
 km = ax.plot(km_array.T,'b')
 gr = ax.plot(graal_array.T,'#FFD700')
@@ -66,7 +68,10 @@ ax.set_ylabel('residual')
 ax.set_yscale('log')
 ax.set_xlim(0,N)
 
-ax.legend([km[0], gr[0]], ['KM', 'EGRAAL'])
-plt.savefig('figures/balls-n=2000.pdf',bbox_inches='tight')
+ax.legend([km[0], gr[0]], ['KM', 'aGRAAL'])
+plt.savefig('figures/balls-n={}-darkgrid.pdf'.format(n), bbox_inches='tight')
 plt.show()
 plt.clf()
+
+np.save("saved_data/km_array-n={}.npy".format(n), km_array)
+np.save("saved_data/gr_array-n={}.npy".format(n), graal_array)

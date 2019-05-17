@@ -3,24 +3,27 @@ import scipy as sp
 import scipy.linalg as LA
 import matplotlib.pyplot as plt
 from algorithms import *
+import seaborn as sns
 
 import matplotlib as mpl
 
-mpl.rc('lines', linewidth=2)
-mpl.rcParams.update(
-    {'font.size': 12, 'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
-mpl.rcParams['xtick.major.pad'] = 2
-mpl.rcParams['ytick.major.pad'] = 2
+# mpl.rc('lines', linewidth=2)
+# mpl.rcParams.update(
+#     {'font.size': 12, 'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
+# mpl.rcParams['xtick.major.pad'] = 2
+# mpl.rcParams['ytick.major.pad'] = 2
 
 n = 1000
 n_exp = 10
 N = 50000
-#gamma = 1.1
-gamma = 1.5
+
 
 zero = np.zeros(n)
 fbf_array = np.empty((n_exp, N))
 graal_array = np.empty((n_exp,N))
+
+# choose scenario: 1 or 2
+scenario = 1
 
 for i in range(n_exp):
     print("Iteration", i+1)
@@ -29,11 +32,17 @@ for i in range(n_exp):
     np.random.seed(gen)
     c = np.random.uniform(1,100,n)
     L = np.random.uniform(0.5,5,n)
-    #beta = np.random.uniform(0.5, 2,n)
-    beta = np.random.uniform(0.3, 4,n)
-    q0 = np.ones(n)
 
+    if scenario == 1:
+         gamma = 1.1
+         beta = np.random.uniform(0.5, 2,n)
+         
+    if scenario == 2:
+        gamma = 1.5
+        beta = np.random.uniform(0.3, 4,n)
+        
     p = lambda Q: (5000**(1./gamma)) * (Q**(-1./gamma))
+    q0 = np.ones(n)
 
     def f(q):
         t = 1./beta
@@ -62,11 +71,10 @@ for i in range(n_exp):
     J = lambda x: LA.norm(x-prox_g(x-F(x),1))
 
     ans1 = tseng_fbf_linesearch(J, F, prox_g, q0, delta=1.5, numb_iter=N-1)
-    ans2 = explicit_graal(J, F, prox_g, q0, numb_iter=N-1, phi=1.5, output=False)
+    ans2 = adaptive_graal(J, F, prox_g, q0, numb_iter=N-1, phi=1.5, output=False)
 
     fbf_array[i] = ans1[0]
     graal_array[i] = ans2[0]
-
 
 
 
@@ -78,7 +86,30 @@ ax.set_xlabel(u'iterations, $k$')
 ax.set_ylabel('residual')
 ax.set_yscale('log')
 
-ax.legend([fbf[0], gr[0]], ['FBF', 'EGRAAL'])
-plt.savefig('figures/nash-2.pdf',bbox_inches='tight')
+ax.legend([fbf[0], gr[0]], ['FBF', 'aGRAAL'])
+plt.savefig('figures/nash-{}_.pdf'.format(scenario), bbox_inches='tight')
 plt.show()
+ax.grid()
+plt.savefig('figures/nash-{}_grid.pdf'.format(scenario), bbox_inches='tight')
 plt.clf()
+
+styles = ["darkgrid", "dark", "whitegrid", "white"]
+#contexts = ["paper", "talk"]
+
+#for context in contexts:
+for style in styles:
+    sns.set_style(style)
+    #    sns.set_context(context)
+    fig, ax, = plt.subplots(nrows=1, ncols=1, figsize=(6, 4))
+    fbf = ax.plot(fbf_array.T,'b')
+    gr = ax.plot(graal_array.T,'#FFD700')
+    ax.set_xlabel(u'iterations, $k$')
+    ax.set_ylabel('residual')
+    ax.set_yscale('log')
+
+    ax.legend([fbf[0], gr[0]], ['FBF', 'aGRAAL'])
+    plt.savefig('figures/nash-{0}-{1}.pdf'.format(scenario, style), bbox_inches='tight')
+    #plt.savefig('figures/nash-2-{}.pdf'.format(context), bbox_inches='tight')
+    plt.show()
+    plt.clf()
+

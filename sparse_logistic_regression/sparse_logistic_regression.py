@@ -5,14 +5,17 @@ import scipy.sparse.linalg as spr_LA
 from time import perf_counter
 from sklearn import datasets
 from make_plots import *
-
+import seaborn as sns
+import pickle
 # Choose one of the following datasets or download a new one from LIBSVM
 
 #filename = "data/a9a"
 #filename = "data/real-sim.bz2"
-filename = "data/rcv1_train.binary.bz2"
-#filename = "data/kdda.t.bz2"
+#filename = "data/rcv1_train.binary.bz2"
+filename = "data/kdda.t.bz2"
 #filename = "data/kdda.bz2"
+#filename = "data/ijcnn1.bz2"
+#filename = "data/covtype.libsvm.binary.bz2"
 
 A, b =  datasets.load_svmlight_file(filename)
 m, n = A.shape
@@ -31,8 +34,8 @@ L = spr_LA.svds(K, k=1, return_singular_vectors=False)**2
 x0 = np.zeros(n)
 
 # stepsize
+#ss = 40/L
 ss = 4/L
-
 
 g = lambda x: gamma*LA.norm(x,1)
 prox_g = lambda x, rho: x + np.clip(-x, -rho*gamma, rho*gamma)
@@ -117,9 +120,9 @@ def fista(x1, s=1, numb_iter=100):
     return np.array(values), x
 
 
-def explicit_graal(x1, numb_iter=100):
+def adaptive_graal(x1, numb_iter=100):
     """
-    Implementation of the explicit GRAAL.
+    Implementation of the adaptive GRAAL.
 
     x1: array, a starting point
     numb_iter: positive integer, number of iterations
@@ -130,14 +133,17 @@ def explicit_graal(x1, numb_iter=100):
     begin = perf_counter()
     phi = 1.5
     x, x_ = x1.copy(), x1.copy()
-    x0 = x + np.random.randn(x.shape[0]) * 1e-9
+    #x0 = x + np.random.randn(x.shape[0]) * 1e-9
+    x0 = x + np.random.randn(x.shape[0]) 
     Kx = K.dot(x)
     dhx = dh(x, Kx)
-    la = phi / 2 * LA.norm(x - x0) / LA.norm(dhx - dh(x0, K.dot(x0)))
+    #la = phi / 2 * LA.norm(x - x0) / LA.norm(dhx - dh(x0, K.dot(x0)))
+    la = 1e-2 * phi / 2 * LA.norm(x - x0) / LA.norm(dhx - dh(x0, K.dot(x0)))
+    
     rho = 1. / phi + 1. / phi**2
     values = [J(x, Kx)]
     th = 1
-
+    la_array = [la]
     for i in range(numb_iter):
         x1 = prox_g(x_ - la * dhx, la)
         Kx1 = K.dot(x1)
@@ -152,29 +158,35 @@ def explicit_graal(x1, numb_iter=100):
         th = phi * la1 / la
         x, la, dhx = x1, la1, dhx1
         values.append(J(x1, Kx1))
-
+        la_array.append(la)
     end = perf_counter()
 
-    print("Time execution of EGRAAL:", end - begin)
-    return values, x, x_
+    print("Time execution of aGRAAL:", end - begin)
+    return values, x, x_, np.array(la_array)
 
 # ------------------------------------------------------------------
 # run algorithms
 
 if __name__ == "__main__":
 
-    N = 10000
+    #N = 10000
+    N = 10
     ans1 = prox_grad(x0, ss, numb_iter=N)
     ans2 = fista(x0, ss, numb_iter=N)
-    ans3 = explicit_graal(x0,  numb_iter=N)
+    ans3 = adaptive_graal(x0,  numb_iter=N)
+    #pickle_out1 = open("saved_data/prox_grad_{}".format(filename), "wb")
+    #pickle_out2 = open("saved_data/fista_{}".format(filename), "wb")
+    #pickle.dump(ans1, pickle_out1)
+    #pickle.dump(ans2, pickle_out2)
+#    x1, x2, x3 = ans1[1], ans2[1], ans3[1]
+#    x1, x3 = ans1[1], ans3[1]
+#    print("Residuals:", [res(x) for x in [x1, x2, x3]])
 
-    x1, x2, x3 = ans1[1], ans2[1], ans3[1]
-    x1, x3 = ans1[1], ans3[1]
-    print("Residuals:", [res(x) for x in [x1, x2, x3]])
-
-    values = [ans1[0], ans2[0], ans3[0]]
-    labels = ["PGM", "FISTA", "EGRAAL"]
+    values = np.array([ans1[0], ans2[0], ans3[0]])
+    labels = ["PGM", "FISTA", "aGRAAL"]
     linestyles = [':', "--", "-"]
     colors = ['b', 'g', '#FFD700']
-
-    plot_results(values, colors, labels, linestyles, filename)
+    np.save("saved_data/{}.npy".format(filename[5:]), values)
+    #filename = 'new-kdda'
+    plot_results(values, colors, labels, linestyles, filename+'darkgrid')
+    #plot_results(values[:-1], colors[:-1], labels[:-1], linestyles[:-1], filename+'for-two')
