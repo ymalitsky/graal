@@ -4,7 +4,7 @@
 
 * About
 This is a supplementary code (in Python 3.6) for the paper Y. Malitsky
-"Golden ratio algorithms for variational inequalities"
+[[https://arxiv.org/abs/1803.08832]["Golden ratio algorithms for variational inequalities"]]
 
 * Usage
 There are 4 folders, each dedicated to its own problem: Nash
