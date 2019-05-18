@@ -12,11 +12,11 @@ equilibrium, convex feasibility problem, sparse logistic regression
 and some nonmonotone problem
 
 ** Nash equilibrium
-There two ways to run this problem. First, using Jupyter =.ipynb= file you can
-run one random instance of the problem. It is convenient if you want
-to see all formulas and plots together. Alternatively, you can run
-=python nash.py= which will generate 10 random instances (as in the paper) and
-save the plots to =figures= folder.
+There two ways to run this problem. First, using Jupyter =.ipynb= file
+you can run one random instance of the problem. It is convenient if
+you want to see all formulas and plots together. Alternatively, you
+can run =python nash.py= which will generate 10 random instances (as
+in the paper) and save the plots to =figures= folder.
 
 ** Feasibility problem
 This folder contains in fact two independent problems, which
@@ -42,4 +42,4 @@ notebook =Sparse_Logistic_Regression.ipynb= for that.
 
 ** Nonmonotone problem
 The script =nonmonotone_F.py=  considers the problem of finding
-a zero of a given nonmonotone operator $F$.
+a zero of a given nonmonotone operator.
