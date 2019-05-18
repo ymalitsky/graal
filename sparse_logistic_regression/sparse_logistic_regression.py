@@ -1,3 +1,15 @@
+# A collection of algorithms to solve sparse logistic regression.  The
+# following algorithms are implemented: proximal gradient, FISTA, and
+# adaptive Golden Ratio algorithm.
+
+
+__author__ = "Yura Malitsky"
+__license__ = "MIT License"
+__email__ = "y.malitsky@gmail.com"
+__status__ = "Development"
+
+
+
 import numpy as np
 import scipy.linalg as LA
 import scipy.sparse as spr
@@ -5,15 +17,13 @@ import scipy.sparse.linalg as spr_LA
 from time import perf_counter
 from sklearn import datasets
 from make_plots import *
-import seaborn as sns
-import pickle
+
 # Choose one of the following datasets or download a new one from LIBSVM
 
 #filename = "data/a9a"
 #filename = "data/real-sim.bz2"
 #filename = "data/rcv1_train.binary.bz2"
 filename = "data/kdda.t.bz2"
-#filename = "data/kdda.bz2"
 #filename = "data/ijcnn1.bz2"
 #filename = "data/covtype.libsvm.binary.bz2"
 
@@ -34,10 +44,9 @@ L = spr_LA.svds(K, k=1, return_singular_vectors=False)**2
 x0 = np.zeros(n)
 
 # stepsize
-#ss = 40/L
 ss = 4/L
 
-g = lambda x: gamma*LA.norm(x,1)
+g = lambda x: gamma * LA.norm(x,1)
 prox_g = lambda x, rho: x + np.clip(-x, -rho*gamma, rho*gamma)
 
 
@@ -45,30 +54,30 @@ f = lambda x: np.log(1. + np.exp(x)).sum()
 
 def df(x):
     exp_x = np.exp(x)
-    return exp_x/(1.+exp_x)
+    return exp_x/(1. + exp_x)
 
 dh = lambda x, Kx: K.T.dot(df(Kx))
 
 # residual
-res = lambda x: LA.norm(x-prox_g(x-dh(x,K.dot(x)), 1))
+res = lambda x: LA.norm(x - prox_g(x - dh(x, K.dot(x)), 1))
 
 # energy
-J = lambda x, Kx: f(Kx)+g(x)
+J = lambda x, Kx: f(Kx) + g(x)
 
 # ------------------------------------------------------------------
 
 ### Algorithms
 
 def prox_grad(x1, s=1, numb_iter=100):
-    """
-    Implementation of the proximal gradient method.
+    """Implementation of the proximal gradient method.
 
     x1: array, a starting point
     s: positive number, a stepsize
     numb_iter: positive integer, number of iterations
 
-    Returns an array of energy values, computed in each iteration, and the
-    argument x_k after numb_iter iterations
+    Returns an array of energy values, computed in each iteration, and
+    the argument x_k after numb_iter iterations
+
     """
     begin = perf_counter()
     x = x1.copy()
@@ -77,10 +86,9 @@ def prox_grad(x1, s=1, numb_iter=100):
     dhx = dh(x,Kx)
 
     for i in range(numb_iter):
-        #x = prox_g(x - s * dh(x, Kx), s)
         x = prox_g(x - s * dhx, s)
         Kx = K.dot(x)
-        dhx = dh(x,Kx)
+        dhx = dh(x, Kx)
         values.append(J(x, Kx))
 
     end = perf_counter()
@@ -90,21 +98,21 @@ def prox_grad(x1, s=1, numb_iter=100):
 
 
 def fista(x1, s=1, numb_iter=100):
-    """
-    Implementation of the FISTA.
+    """Implementation of the FISTA.
 
     x1: array, a starting point
     s: positive number, a stepsize
     numb_iter: positive integer, number of iterations
 
-    Returns an array of energy values, computed in each iteration, and the
-    argument x_k after numb_iter iterations
+    Returns an array of energy values, computed in each iteration, and
+    the argument x_k after numb_iter iterations
+
     """
     begin = perf_counter()
     x, y = x1.copy(), x1.copy()
     t = 1.
     Ky = K.dot(y)
-    values = [J(y,Ky)]
+    values = [J(y, Ky)]
 
     for i in range(numb_iter):
         x1 = prox_g(y - s * dh(y, Ky), s)
@@ -121,19 +129,18 @@ def fista(x1, s=1, numb_iter=100):
 
 
 def adaptive_graal(x1, numb_iter=100):
-    """
-    Implementation of the adaptive GRAAL.
+    """Implementation of the adaptive GRAAL.
 
     x1: array, a starting point
     numb_iter: positive integer, number of iterations
 
-    Returns an array of energy values, computed in each iteration, and the
-    argument x_k after numb_iter iterations
+    Returns an array of energy values, computed in each iteration, and
+    the argument x_k after numb_iter iterations
+
     """
     begin = perf_counter()
     phi = 1.5
     x, x_ = x1.copy(), x1.copy()
-    #x0 = x + np.random.randn(x.shape[0]) * 1e-9
     x0 = x + np.random.randn(x.shape[0]) 
     Kx = K.dot(x)
     dhx = dh(x, Kx)
@@ -169,24 +176,18 @@ def adaptive_graal(x1, numb_iter=100):
 
 if __name__ == "__main__":
 
-    #N = 10000
-    N = 10
+    N = 10000
     ans1 = prox_grad(x0, ss, numb_iter=N)
     ans2 = fista(x0, ss, numb_iter=N)
     ans3 = adaptive_graal(x0,  numb_iter=N)
-    #pickle_out1 = open("saved_data/prox_grad_{}".format(filename), "wb")
-    #pickle_out2 = open("saved_data/fista_{}".format(filename), "wb")
-    #pickle.dump(ans1, pickle_out1)
-    #pickle.dump(ans2, pickle_out2)
-#    x1, x2, x3 = ans1[1], ans2[1], ans3[1]
-#    x1, x3 = ans1[1], ans3[1]
-#    print("Residuals:", [res(x) for x in [x1, x2, x3]])
 
+    # make plots 
     values = np.array([ans1[0], ans2[0], ans3[0]])
     labels = ["PGM", "FISTA", "aGRAAL"]
     linestyles = [':', "--", "-"]
     colors = ['b', 'g', '#FFD700']
-    np.save("saved_data/{}.npy".format(filename[5:]), values)
-    #filename = 'new-kdda'
     plot_results(values, colors, labels, linestyles, filename+'darkgrid')
-    #plot_results(values[:-1], colors[:-1], labels[:-1], linestyles[:-1], filename+'for-two')
+
+    # save energy values of all three methods
+    np.save("saved_data/{}.npy".format(filename[5:]), values)
+    

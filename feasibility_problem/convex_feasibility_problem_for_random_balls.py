@@ -2,25 +2,21 @@ import numpy as np
 import scipy.linalg as LA
 import matplotlib.pyplot as plt
 from fixed_points import *
-import matplotlib as mpl
 import seaborn as sns
 
 
-# mpl.rc('lines', linewidth=2)
-# mpl.rcParams.update(
-#     {'font.size': 12, 'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
-# mpl.rcParams['xtick.major.pad'] = 2
-# mpl.rcParams['ytick.major.pad'] = 2
-
+# choose dimensions m, n
+# choose how many experiments n_exp
+# choose number of iterations
 
 n, m = 1000, 2000
 n_exp = 100
 N = 1000
 
+# intialization
 zero = np.zeros(n)
 km_array = np.empty((n_exp, N))
 graal_array = np.empty((n_exp,N))
-
 
 
 for i in range(n_exp):
@@ -37,8 +33,6 @@ for i in range(n_exp):
     # starting point
     #x0 = np.random.uniform(-100,100,n)
     x0 = np.mean(C, axis=0)
-
-
 
     # Define operator
     def T(x):
@@ -59,7 +53,8 @@ for i in range(n_exp):
     graal_array[i] = ans2[0]
 
 # show and save results
-sns.set()
+sns.set() # comment this line if seaborn is not installed
+
 fig, ax, = plt.subplots(nrows=1, ncols=1, figsize=(6, 4))
 km = ax.plot(km_array.T,'b')
 gr = ax.plot(graal_array.T,'#FFD700')

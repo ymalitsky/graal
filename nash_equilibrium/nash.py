@@ -1,3 +1,6 @@
+# Application of algorithms from algorithms.py to the problem of
+# finding Nash-Cournot equilibrium for some highly nonlinear problem.
+
 import numpy as np
 import scipy as sp
 import scipy.linalg as LA
@@ -5,13 +8,6 @@ import matplotlib.pyplot as plt
 from algorithms import *
 import seaborn as sns
 
-import matplotlib as mpl
-
-# mpl.rc('lines', linewidth=2)
-# mpl.rcParams.update(
-#     {'font.size': 12, 'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
-# mpl.rcParams['xtick.major.pad'] = 2
-# mpl.rcParams['ytick.major.pad'] = 2
 
 n = 1000
 n_exp = 10
@@ -92,24 +88,4 @@ plt.show()
 ax.grid()
 plt.savefig('figures/nash-{}_grid.pdf'.format(scenario), bbox_inches='tight')
 plt.clf()
-
-styles = ["darkgrid", "dark", "whitegrid", "white"]
-#contexts = ["paper", "talk"]
-
-#for context in contexts:
-for style in styles:
-    sns.set_style(style)
-    #    sns.set_context(context)
-    fig, ax, = plt.subplots(nrows=1, ncols=1, figsize=(6, 4))
-    fbf = ax.plot(fbf_array.T,'b')
-    gr = ax.plot(graal_array.T,'#FFD700')
-    ax.set_xlabel(u'iterations, $k$')
-    ax.set_ylabel('residual')
-    ax.set_yscale('log')
-
-    ax.legend([fbf[0], gr[0]], ['FBF', 'aGRAAL'])
-    plt.savefig('figures/nash-{0}-{1}.pdf'.format(scenario, style), bbox_inches='tight')
-    #plt.savefig('figures/nash-2-{}.pdf'.format(context), bbox_inches='tight')
-    plt.show()
-    plt.clf()
 

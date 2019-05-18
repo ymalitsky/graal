@@ -1,15 +1,28 @@
 # What should be ignored by git
 
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
 
-# C extensions 
-*.so
+# python
+__pycache__/
+*.npy
+
+# emacs
+auto/
+*.*~
+
+# TeX
+*.pdf
+*.idx
+*.log
+*.out
+*.aux
+*.synctex.gz
+*.ilg
+*.ind
+*.rel
+*.bbl
+*.blg
 
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# from Emacs
-*~
+
